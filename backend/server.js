@@ -5,6 +5,7 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const dotenv = require("dotenv").config();
 const userRoute = require("./routes/userRoutes");
+const errorHandler = require("./middleWare/errorMiddleWare");
 
 //app
 const app = express();
@@ -15,7 +16,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 //Routes Middlewares
-app.use("/api/users",userRoute);
+app.use("/api/users", userRoute);
 //routes
 app.get("/", (req, res) => {
   res.send("Home Page");
@@ -23,6 +24,9 @@ app.get("/", (req, res) => {
 
 //port
 const PORT = process.env.PORT;
+
+//Error Middle Ware
+app.use(errorHandler);
 
 //connect to db and start server
 //connect db
