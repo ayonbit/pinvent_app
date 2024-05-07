@@ -36,7 +36,7 @@ const userSchema = mongoose.Schema(
       required: [true, "Please add a number"],
       default: "+88",
     },
-    phone: {
+    bio: {
       type: String,
       maxlenght: [250, "Bio must not be more than 250 char"],
       default: "bio",
