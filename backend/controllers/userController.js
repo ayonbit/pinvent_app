@@ -7,6 +7,7 @@ const jwt = require("jsonwebtoken");
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "1d" });
 };
+
 //RegisterUser Controller
 const registerUser = asyncHandler(async (req, res) => {
   //for test purpose async
@@ -41,8 +42,19 @@ const registerUser = asyncHandler(async (req, res) => {
     email,
     password,
   });
+
   //Generate Token
   const token = generateToken(user._id);
+
+  //send HTTP-cookie Only
+  res.cookie("token", token, {
+    path: "/",
+    httpOnly: true,
+    expires: new Date(Date.now() + 1000 * 86400), // 1 day
+    //only for deploy
+    // sameSite:"none",
+    // secure:true
+  });
 
   if (user) {
     const { _id, name, email, photo, phone, bio } = user;

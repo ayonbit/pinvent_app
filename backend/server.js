@@ -6,14 +6,17 @@ const bodyParser = require("body-parser");
 const dotenv = require("dotenv").config();
 const userRoute = require("./routes/userRoutes");
 const errorHandler = require("./middleWare/errorMiddleWare");
+const cookieParser = require("cookie-parser");
 
 //app
 const app = express();
 
 //Middlewares
 app.use(express.json());
+app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(cors());
 
 //Routes Middlewares
 app.use("/api/users", userRoute);
