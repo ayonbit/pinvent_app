@@ -2,7 +2,7 @@
 const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
 const jwt = require("jsonwebtoken");
-
+const loginUSer = require("./loginUser");
 //create tokken
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "1d" });
@@ -10,6 +10,7 @@ const generateToken = (id) => {
 
 //RegisterUser Controller
 const registerUser = asyncHandler(async (req, res) => {
+  
   //for test purpose async
   // if (!req.body.email) {
   //   res.status(400);
@@ -77,4 +78,5 @@ const registerUser = asyncHandler(async (req, res) => {
 //controller module exprots as many
 module.exports = {
   registerUser,
+  loginUSer,
 };
