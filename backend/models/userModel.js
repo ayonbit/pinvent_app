@@ -48,11 +48,16 @@ const userSchema = mongoose.Schema(
   }
 );
 //encrypt pasword before save to db
-userSchema.pre("save", async (next) => {
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) {
+    return next();
+  }
+
   // Hashed Password
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(this.password, salt);
   this.password = hashedPassword;
+  next();
 });
 
 const User = mongoose.model("User", userSchema);

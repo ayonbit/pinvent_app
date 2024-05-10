@@ -1,6 +1,7 @@
 //dpendenciress after "express-async-handler bcrypt"
 const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
+const jwt = require("jsonwebtoken");
 
 //RegisterUser Controller
 const registerUser = asyncHandler(async (req, res) => {
