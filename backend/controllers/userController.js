@@ -1,6 +1,7 @@
-//dpendenciress after "express-async-handler"
+//dpendenciress after "express-async-handler bcrypt"
 const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
+const bcrypt = require("bcryptjs");
 
 //RegisterUser Controller
 const registerUser = asyncHandler(async (req, res) => {
@@ -29,12 +30,16 @@ const registerUser = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("Email has already been registered");
   }
+  //encrypt pasword before save to db
+
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(password, salt);
 
   //create newUSer
   const user = await User.create({
     name,
     email,
-    password,
+    password: hashedPassword,
   });
   if (user) {
     const { _id, name, email, photo, phone, bio } = user;
