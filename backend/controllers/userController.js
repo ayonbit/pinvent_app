@@ -73,7 +73,8 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new Error("Invalid User Data");
   }
 });
-//LoginUser Contoller
+
+//LoginUser Controller
 const loginUser = asyncHandler(async (req, res) => {
   //res.send("Login User"); //test
   const { email, password } = req.body;
@@ -124,8 +125,33 @@ const loginUser = asyncHandler(async (req, res) => {
     throw new Error("Invalid email or password");
   }
 });
+
+//Logout User Controller
+const logOut = asyncHandler(async (req, res) => {
+  //send HTTP-cookie Only
+  res.cookie("token", "", {
+    path: "/",
+    httpOnly: true,
+    expires: new Date(0),
+    //only for deploy
+    sameSite: "none",
+    secure: true,
+  });
+  return res.status(200).json({
+    message: "Successfully Logged Out",
+  });
+});
+
+//Get User Data / GetUser Controller
+
+const getUser = asyncHandler(async (req, res) => {
+  res.send("Get USer");
+});
+
 //controller module exprots as many
 module.exports = {
   registerUser,
   loginUser,
+  logOut,
+  getUser,
 };
