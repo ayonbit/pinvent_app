@@ -24,9 +24,9 @@ app.use("/api/users", userRoute);
 app.get("/", (req, res) => {
   res.send("Home Page");
 });
-app.get("/api/users/register", (req, res) => {
-  res.send("Register User");
-});
+// app.get("/api/users/register", (req, res) => {
+//   res.send("Register User");
+// });
 // app.get("/api/users/login", (req, res) => {
 //   res.send("Login User");
 // });
