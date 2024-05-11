@@ -10,7 +10,6 @@ const generateToken = (id) => {
 
 //RegisterUser Controller
 const registerUser = asyncHandler(async (req, res) => {
-  
   //for test purpose async
   // if (!req.body.email) {
   //   res.status(400);
