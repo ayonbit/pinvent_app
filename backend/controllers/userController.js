@@ -180,6 +180,11 @@ const loginSatatus = asyncHandler(async (req, res) => {
   return res.json(false);
 });
 
+//Update User
+const UpdateUser = asyncHandler(async (req, res) => {
+  res.send("User Updated");
+});
+
 //controller module exprots as many
 module.exports = {
   registerUser,
@@ -187,4 +192,5 @@ module.exports = {
   logOut,
   getUser,
   loginSatatus,
+  UpdateUser,
 };
