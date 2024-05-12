@@ -1,4 +1,4 @@
-//dpendenciress after "express-async-handler bcrypt"
+//dpendencies
 const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
 const jwt = require("jsonwebtoken");
@@ -104,14 +104,14 @@ const loginUser = asyncHandler(async (req, res) => {
     httpOnly: true,
     expires: new Date(Date.now() + 1000 * 86400), // 1 day
     //only for deploy
-    sameSite: "none",
-    secure: true,
+    //sameSite: "none",
+    //secure: true,
   });
 
   if (user && passwordCorrect) {
     const { _id, name, email, photo, phone, bio } = user;
 
-    res.status(200).json({
+    res.status(201).json({
       _id,
       name,
       email,
@@ -143,9 +143,41 @@ const logOut = asyncHandler(async (req, res) => {
 });
 
 //Get User Data / GetUser Controller
-
 const getUser = asyncHandler(async (req, res) => {
-  res.send("Get USer");
+  const user = await User.findById(req.user._id);
+
+  //user Found
+  if (user) {
+    const { _id, name, email, photo, phone, bio } = user;
+
+    res.status(200).json({
+      _id,
+      name,
+      email,
+      photo,
+      phone,
+      bio,
+    });
+  } else {
+    res.status(400);
+    throw new Error("User Not Found!");
+  }
+});
+
+//Get Loging Status
+
+const loginSatatus = asyncHandler(async (req, res) => {
+  const token = req.cookies.token;
+  if (!token) {
+    return res.json(false);
+  }
+  //if token exists
+  //verfiy token
+  const verified = jwt.verify(token, process.env.JWT_SECRET);
+  if (verified) {
+    return res.json(true);
+  }
+  return res.json(false);
 });
 
 //controller module exprots as many
@@ -154,4 +186,5 @@ module.exports = {
   loginUser,
   logOut,
   getUser,
+  loginSatatus,
 };
