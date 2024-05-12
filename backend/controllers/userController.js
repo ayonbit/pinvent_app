@@ -3,6 +3,10 @@ const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const Token = require("../models/tokenModel");
+const crypto = require("crypto");
+const sendEmail = require("../utilities/sendEmail");
+
 //create tokken
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "1d" });
@@ -208,7 +212,7 @@ const UpdateUser = asyncHandler(async (req, res) => {
   }
 });
 
-//chnage password
+//Change password
 const changePassword = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
   const { oldPassword, password } = req.body;
@@ -237,6 +241,66 @@ const changePassword = asyncHandler(async (req, res) => {
   }
 });
 
+//Forgot password
+const forgotPassword = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    res.status(404);
+    throw new Error("User Does not exist");
+  }
+  // create Reset Token
+  let resetToken = crypto.randomBytes(32).toString("hex") + user._id;
+
+  //Hash token before saving to DB
+  const hasedToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+
+  //save to DB
+  await new Token({
+    userId: user._id,
+    token: hasedToken,
+    createdAt: Date.now(),
+    experiedAt: Date.now() + 30 * (60 * 1000), //30 min
+  }).save();
+
+  //consturct Reset URL
+  const resetUrl = `${process.env.FRONTEND_URL}/
+  resetpassword/${resetToken}`;
+
+  //Reset Email Content
+  //body
+  const message = `
+   <h2>Hello ${user.name}</h2>
+   <p>Please use this url below to reset your password.</p>
+   <p>The Reset link is valid for only 30 minutes.</p>
+
+   <a href=${resetUrl} clicktracking=off >${resetUrl}</a>
+
+   <p> Regards </p>
+   <p> Pinvent Team </p>
+  `;
+
+  //subject
+  const subject = "Password Reset Request";
+  const send_to = user.email;
+  const sent_from = process.env.EMAIL_USER;
+
+  try {
+    await sendEmail(subject, message, send_to, sent_from);
+    res.status(200).json({
+      seccess: true,
+      message: "Reset Email Sent",
+    });
+  } catch (error) {
+    res.status(500);
+    throw new Error("Email Not Sent! Please Try Again");
+  }
+});
+
 //controller module exprots as many
 module.exports = {
   registerUser,
@@ -246,4 +310,5 @@ module.exports = {
   loginSatatus,
   UpdateUser,
   changePassword,
+  forgotPassword,
 };
