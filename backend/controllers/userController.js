@@ -250,6 +250,12 @@ const forgotPassword = asyncHandler(async (req, res) => {
     res.status(404);
     throw new Error("User Does not exist");
   }
+  //Delete token if it exists in DB
+  let token = await Token.findOne({ userId: user._id });
+  if (token) {
+    await token.deleteOne();
+  }
+
   // create Reset Token
   let resetToken = crypto.randomBytes(32).toString("hex") + user._id;
 
@@ -274,7 +280,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
   //Reset Email Content
   //body
   const message = `
-   <h2>Hello ${user.name}</h2>
+   <h2>Hello,${user.name}</h2>
    <p>Please use this url below to reset your password.</p>
    <p>The Reset link is valid for only 30 minutes.</p>
 
@@ -301,6 +307,8 @@ const forgotPassword = asyncHandler(async (req, res) => {
   }
 });
 
+//Reset Password
+const resetPassword = asyncHandler(async (req, res) => {});
 //controller module exprots as many
 module.exports = {
   registerUser,
@@ -311,4 +319,5 @@ module.exports = {
   UpdateUser,
   changePassword,
   forgotPassword,
+  resetPassword,
 };
