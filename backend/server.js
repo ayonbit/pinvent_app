@@ -35,10 +35,10 @@ app.use(errorHandler);
 //connect db
 mongoose
   .connect(process.env.MONGO_URI)
-  .then(() => {
-    //start server
-    app.listen(PORT, () => {
-      console.log(`Server is running on PORT ${PORT}`);
-    });
-  })
-  .catch((err) => console.log(err));
+  .then(() => console.log("Database Connected Successfully!"))
+  .catch((err) => console.log("Database Not Connected", err));
+
+//start server
+app.listen(PORT, () => {
+  console.log(`Server is running on PORT ${PORT}`);
+});
