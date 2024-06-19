@@ -7,6 +7,7 @@ const dotenv = require("dotenv").config();
 const userRoute = require("./routes/userRoutes");
 const errorHandler = require("./middleWare/errorMiddleWare");
 const cookieParser = require("cookie-parser");
+const morgan = require("morgan");
 
 //app
 const app = express();
@@ -17,7 +18,7 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors());
-
+app.use(morgan("tiny"));
 //Routes Middlewares
 app.use("/api/users", userRoute);
 //routes
@@ -40,5 +41,5 @@ mongoose
 
 //start server
 app.listen(PORT, () => {
-  console.log(`Server is running on PORT ${PORT}`);
+  console.log(`Server is running http://localhost:${PORT}`);
 });
